@@ -291,8 +291,8 @@
     color: var(--color-navy);
 
     /* 4. Text Visibility Override */
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    /* Applied dark shadow as requested */
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    /* Extremely subtle high-radius dark blur */
   }
 
   .hero-subheading {
@@ -303,7 +303,7 @@
     max-width: 90%;
     color: var(--color-navy);
     /* Ensure dark text if bg is light */
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
     font-weight: 500;
   }
 

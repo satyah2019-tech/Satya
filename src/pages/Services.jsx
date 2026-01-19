@@ -7,6 +7,15 @@ import './ServicesPage.css'
 const ServicesPage = () => {
   const containerRef = useRef(null)
   const [activeIndex, setActiveIndex] = React.useState(null) // Track active card for mobile
+  const [isMobile, setIsMobile] = React.useState(false)
+
+  // Detect mobile for conditional variants
+  React.useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 900)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Parallax for ambient layers
   const { scrollYProgress } = useScroll({
@@ -27,11 +36,16 @@ const ServicesPage = () => {
     }
   })
 
-  // 3-Layer Progressive Reveal Variants (Legacy/Reference if needed, logic handled in render now)
+  // 3-Layer Progressive Reveal Variants
+  // Desktop: Lift up (-80px). Mobile: Center (0px translation, flex handles centering).
   const titleVariant = {
     rest: { y: 0 },
     hover: {
       y: -80,
+      transition: { duration: 0.5, ease: "easeOut" }
+    },
+    mobileActive: {
+      y: 0, // No lift needed, centering handles it
       transition: { duration: 0.5, ease: "easeOut" }
     }
   }
@@ -49,6 +63,29 @@ const ServicesPage = () => {
       height: "auto",
       display: "block",
       transition: { duration: 0.5, ease: "easeOut" }
+    },
+    mobileActive: {
+      opacity: 1,
+      y: 0,
+      height: "auto",
+      display: "block",
+      transition: { duration: 0.5, ease: "easeOut" }
+    }
+  }
+
+  const tagVariant = {
+    rest: { height: 0, opacity: 0, marginBottom: 0 },
+    hover: {
+      height: "auto",
+      opacity: 1,
+      marginBottom: 16,
+      transition: { duration: 0.4, ease: "easeOut" }
+    },
+    mobileActive: {
+      height: "auto",
+      opacity: 1,
+      marginBottom: 16,
+      transition: { duration: 0.4, ease: "easeOut" }
     }
   }
 
@@ -121,6 +158,7 @@ const ServicesPage = () => {
 
   // Helper to toggle card on mobile
   const handleCardClick = (index) => {
+    if (!isMobile) return // Desktop uses hover, ignore clicks
     setActiveIndex(prev => prev === index ? null : index)
   }
 
@@ -158,9 +196,9 @@ const ServicesPage = () => {
                 key={index}
                 className={`detailed-service-panel ${activeIndex === index ? 'active' : ''}`}
                 initial="rest"
-                whileHover="hover" // Keeps desktop hover working
+                whileHover={isMobile ? undefined : "hover"} // Disable hover on mobile to prevent conflicts
                 whileTap={{ scale: 0.98 }} // Visual feedback on tap
-                animate={activeIndex === index ? "hover" : "rest"} // Mobile toggle overrides rest
+                animate={activeIndex === index ? "mobileActive" : "rest"} // Use new mobileActive variant
                 onClick={() => handleCardClick(index)} // Toggle state
               >
                 <div className="service-panel-media">
@@ -177,40 +215,31 @@ const ServicesPage = () => {
 
                   {/* Interactive Content Layer */}
                   <div className="service-explore-content">
-                    <motion.div className="content-slide-wrapper">
+                    <motion.div
+                      className="content-slide-wrapper"
+                      layout // Enables smooth flexbox transition (Bottom -> Center)
+                      transition={{ duration: 0.5, ease: "easeOut" }}
+                    >
 
                       {/* 1. CAPABILITY TAG */}
                       <motion.div
                         className="explore-tag-wrapper"
-                        variants={{
-                          rest: { height: 0, opacity: 0, marginBottom: 0 },
-                          hover: {
-                            height: "auto",
-                            opacity: 1,
-                            marginBottom: 16,
-                            transition: { duration: 0.4, ease: "easeOut" }
-                          }
-                        }}
+                        variants={tagVariant}
                       >
                         <span className="explore-subtitle-label">CAPABILITY</span>
                       </motion.div>
 
                       {/* 2. MAIN TITLE */}
                       <motion.div className="explore-header-group">
-                        <h2 className="explore-title">{service.title}</h2>
+                        <motion.h2 className="explore-title" variants={titleVariant}>
+                          {service.title}
+                        </motion.h2>
                       </motion.div>
 
                       {/* 3. DESCRIPTION & TAGS */}
                       <motion.div
                         className="explore-body-container"
-                        variants={{
-                          rest: { height: 0, opacity: 0 },
-                          hover: {
-                            height: "auto",
-                            opacity: 1,
-                            transition: { duration: 0.5, ease: "easeOut" }
-                          }
-                        }}
+                        variants={contentVariant}
                       >
                         <p className="explore-description">
                           {service.description}

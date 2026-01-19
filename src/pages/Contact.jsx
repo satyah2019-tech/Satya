@@ -171,7 +171,11 @@ const Contact = () => {
                   <div className="info-icon">📧</div>
                   <div className="info-content">
                     <h3>Email</h3>
-                    <p>satyah2019@gmail.com</p>
+                    <p>
+                      <a href="mailto:satyah2019@gmail.com" className="contact-link">
+                        satyah2019@gmail.com
+                      </a>
+                    </p>
                   </div>
                 </div>
 
@@ -179,7 +183,11 @@ const Contact = () => {
                   <div className="info-icon">📞</div>
                   <div className="info-content">
                     <h3>Phone</h3>
-                    <p>7875695021 / 9175085911</p>
+                    <p>
+                      <a href="tel:7875695021" className="contact-link">7875695021</a>
+                      {' / '}
+                      <a href="tel:9175085911" className="contact-link">9175085911</a>
+                    </p>
                   </div>
                 </div>
 

@@ -420,12 +420,10 @@
   /* Mobile: When active, allow scrolling if content overflows */
   .detailed-service-panel.active .service-explore-content {
     overflow-y: auto;
-    justify-content: flex-start;
-    /* Align top when scrolling might be needed, or keep flex-end? */
-    /* flex-end is better for the "slide up" feel, but if it overflows, flex-end can hide top content. 
-       Let's keep it simple: auto scroll. */
-    padding-bottom: 80px;
-    /* Safe space */
+    justify-content: center;
+    /* PERFECT VERTICAL CENTERING as requested */
+    padding: 40px 20px;
+    /* Adjust padding for mobile layout */
     pointer-events: auto;
     /* Ensure touch works */
   }
@@ -440,6 +438,7 @@
   .detailed-service-panel.active .service-panel-video {
     filter: blur(8px) brightness(0.6);
     transform: scale(1.05);
+    /* Ensure transition matches desktop exactly (inherited from base class: 1.5s transform, 0.5s filter) */
   }
 
   .detailed-service-panel.active .service-panel-wash {
