@@ -24,7 +24,7 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+  background: var(--color-bg-gradient);
   /* Soft blue-gray gradient */
 }
 
@@ -49,18 +49,15 @@
    BACKGROUND PATTERNS
    ============================================ */
 
-.hero-grid-pattern {
+.hero-grid-3d-container {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 120%;
-  background-image:
-    linear-gradient(rgba(148, 163, 184, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
-  background-size: 50px 50px;
-  mask-image: radial-gradient(circle at center, black 0%, transparent 80%);
-  -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 80%);
+  height: 100%;
+  z-index: 0;
+  opacity: 0.6;
+  /* Adjust visibility */
 }
 
 .hero-gradient-overlay {
@@ -69,7 +66,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.8), transparent 60%);
+  background: var(--hero-radial-gradient);
   pointer-events: none;
 }
 

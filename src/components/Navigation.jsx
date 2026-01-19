@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Logo from './Logo'
@@ -7,14 +7,23 @@ import './Navigation.css'
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
+
+  // Detect scroll for potential styling adjustments (e.g., more blur on scroll)
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const menuItems = [
     { path: '/about', label: 'About Us' },
     { path: '/services', label: 'Services' },
     { path: '/partners', label: 'Partners & Clients' },
-    { path: '/contact', label: 'Contact Us' },
   ]
 
   const toggleMenu = () => {
@@ -32,14 +41,44 @@ const Navigation = () => {
   }
 
   return (
-    <nav className="navigation">
-      <div className="nav-container">
+    <nav className={`navigation ${scrolled ? 'scrolled' : ''}`}>
+      <div className="nav-pill-container">
+
+        {/* LEFT: Logo Section */}
         <Link to="/" className="nav-logo" onClick={() => window.scrollTo(0, 0)}>
-          <Logo size={60} />
-          <span className="logo-text">SATYAH</span>
+          <Logo size={42} /> {/* Slightly larger logo icon */}
+          <span className="logo-text">SATYAH RESEARCH</span>
         </Link>
 
-        <div className="nav-right">
+        {/* RIGHT: Desktop Navigation & Actions */}
+        <div className="nav-desktop">
+          <ul className="nav-links">
+            {menuItems.map((item) => (
+              <li key={item.path}>
+                <Link
+                  to={item.path}
+                  className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <Link to="/contact" className="nav-cta-button">
+            Contact Us
+          </Link>
+
+          <div className="nav-desktop-theme">
+            <ThemeToggle />
+          </div>
+        </div>
+
+        {/* MOBILE: Hamburger & Menu */}
+        <div className="nav-mobile-controls">
+          {/* Show Theme Toggle on mobile outside menu for convenience, or inside? 
+               Let's keep it inside based on previous design, or just hamburger here.
+           */}
           <button
             className={`hamburger ${isOpen ? 'active' : ''}`}
             onClick={toggleMenu}
@@ -51,6 +90,7 @@ const Navigation = () => {
           </button>
         </div>
 
+        {/* Mobile Menu Overlay */}
         <AnimatePresence>
           {isOpen && (
             <>
@@ -70,10 +110,11 @@ const Navigation = () => {
                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               >
                 <div className="menu-header">
-                  <Logo size={75} />
-                  <span className="logo-text">SATYAH</span>
+                  <Logo size={60} />
+                  <span className="logo-text">SATYAH RESEARCH</span>
                 </div>
                 <ul className="menu-list">
+                  {/* Standard Links */}
                   {menuItems.map((item, index) => (
                     <motion.li
                       key={item.path}
@@ -82,20 +123,27 @@ const Navigation = () => {
                       transition={{ delay: index * 0.08 }}
                     >
                       <button
-                        className={`menu-link ${location.pathname === item.path ? 'active' : ''
-                          }`}
+                        className={`menu-link ${location.pathname === item.path ? 'active' : ''}`}
                         onClick={() => handleNavClick(item.path)}
                       >
-                        <span className="menu-link-text">{item.label}</span>
-                        <motion.div
-                          className="menu-link-indicator"
-                          initial={{ scaleX: 0 }}
-                          whileHover={{ scaleX: 1 }}
-                          transition={{ duration: 0.3 }}
-                        />
+                        {item.label}
                       </button>
                     </motion.li>
                   ))}
+
+                  {/* Contact Us in Mobile Menu */}
+                  <motion.li
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: menuItems.length * 0.08 }}
+                  >
+                    <button
+                      className={`menu-link ${location.pathname === '/contact' ? 'active' : ''}`}
+                      onClick={() => handleNavClick('/contact')}
+                    >
+                      Contact Us
+                    </button>
+                  </motion.li>
                 </ul>
 
                 <motion.div

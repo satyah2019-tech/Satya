@@ -3,6 +3,8 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import './Hero.css'
 
+import LiquidGrid from './LiquidGrid'
+
 const Hero = () => {
   const heroRef = useRef(null)
 
@@ -12,8 +14,11 @@ const Hero = () => {
     offset: ["start start", "end start"]
   })
 
+  // Reduced parallax range for smoother feel, since we have 3D motion now
   const yMath = useTransform(scrollYProgress, [0, 1], [0, -50])
-  const yGrid = useTransform(scrollYProgress, [0, 1], [0, 30])
+
+  // yGrid is no longer needed for the 3D component directly, 
+  // unless we pass it as a prop, but let's keep it simple first.
 
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
@@ -39,12 +44,11 @@ const Hero = () => {
 
   return (
     <section className="hero" ref={heroRef}>
-      {/* Background Layer: Minimal Gradient + Faint Grid */}
+      {/* Background Layer: Minimal Gradient + 3D Liquid Grid */}
       <div className="hero-background-ambient">
-        <motion.div
-          className="hero-grid-pattern"
-          style={{ y: yGrid }}
-        />
+        <div className="hero-grid-3d-container">
+          <LiquidGrid />
+        </div>
         <div className="hero-gradient-overlay" />
       </div>
 
