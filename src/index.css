@@ -68,6 +68,9 @@
   --glass-border: rgba(64, 128, 200, 0.25);
   --glass-blur: blur(12px);
   --glass-shadow: 0 8px 32px rgba(64, 128, 200, 0.15);
+
+  /* Hero Gradient - Light Mode */
+  --hero-radial-gradient: radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.4), transparent 60%);
 }
 
 [data-theme="dark"] {
@@ -99,6 +102,9 @@
   --glass-bg: rgba(0, 0, 0, 0.5);
   --glass-border: rgba(64, 128, 255, 0.2);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  /* Hero Gradient - Dark Mode */
+  --hero-radial-gradient: radial-gradient(circle at 70% 30%, rgba(20, 30, 60, 0.4), transparent 60%);
 }
 
 * {

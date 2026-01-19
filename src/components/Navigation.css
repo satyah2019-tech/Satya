@@ -1,34 +1,62 @@
+/* ============================================
+   NAVIGATION: FLOATING PILL
+   ============================================ */
+
 .navigation {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
+  padding: var(--spacing-sm);
+  display: flex;
+  justify-content: center;
+  transition: padding var(--transition-base);
+}
+
+.navigation.scrolled {
+  padding-top: var(--spacing-xs);
+}
+
+
+.nav-pill-container {
+  width: 100%;
+  max-width: 1400px;
+  /* Limit max stretch slightly for aesthetics on huge screens */
+  margin: 0 auto;
+
+  /* The "Full Width" look with Pill styling */
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--color-border);
-  transition: background-color var(--transition-theme), border-color var(--transition-theme);
-}
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
 
-.nav-container {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: var(--spacing-sm) var(--spacing-md);
+  /* Shape */
+  border-radius: 100px;
+  padding: 12px 32px;
+  height: 80px;
+  /* Consistent height */
+
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  transition: all var(--transition-theme);
 }
 
+/* ============================================
+   LEFT: BRANDING
+   ============================================ */
 .nav-logo {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: 12px;
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: var(--color-navy);
+  text-decoration: none;
   transition: transform var(--transition-fast), color var(--transition-theme);
 }
 
@@ -37,49 +65,112 @@
 }
 
 .nav-logo:hover {
-  transform: scale(1.05);
+  transform: scale(1.02);
   color: var(--color-professional-blue);
-  transition: transform var(--transition-fast), color var(--transition-fast);
-}
-
-[data-theme="dark"] .nav-logo:hover {
-  color: var(--color-cyan-blue-light);
 }
 
 .logo-text {
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
 }
 
-.nav-right {
+/* ============================================
+   RIGHT: DESKTOP NAVIGATION
+   ============================================ */
+.nav-desktop {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: 32px;
 }
 
-/* Hamburger Button */
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 32px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-link {
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+  position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--color-professional-blue);
+}
+
+[data-theme="dark"] .nav-link:hover,
+[data-theme="dark"] .nav-link.active {
+  color: var(--color-professional-blue-light);
+}
+
+/* CTA BUTTON */
+.nav-cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px 28px;
+  border-radius: 50px;
+
+  background-color: var(--color-professional-blue);
+  color: #ffffff !important;
+  /* Force white text */
+
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+
+  transition: all var(--transition-base);
+  box-shadow: 0 4px 12px rgba(58, 90, 138, 0.3);
+}
+
+.nav-cta-button:hover {
+  transform: translateY(-2px);
+  background-color: var(--color-professional-blue-dark);
+  box-shadow: 0 6px 16px rgba(58, 90, 138, 0.4);
+}
+
+[data-theme="dark"] .nav-cta-button {
+  background-color: var(--color-professional-blue);
+  box-shadow: 0 4px 12px rgba(64, 128, 255, 0.3);
+}
+
+[data-theme="dark"] .nav-cta-button:hover {
+  background-color: var(--color-professional-blue-light);
+  box-shadow: 0 6px 16px rgba(64, 128, 255, 0.5);
+}
+
+
+/* ============================================
+   MOBILE & RESPONSIVE
+   ============================================ */
+
+.nav-mobile-controls {
+  display: none;
+  /* Hidden on desktop */
+}
+
+/* Hamburger Styles Reuse logic but streamlined */
 .hamburger {
   width: 44px;
   height: 44px;
-  position: relative;
-  z-index: 1001;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 6px;
-  padding: 10px;
   background: transparent;
   border: none;
-  transition: all var(--transition-base);
   cursor: pointer;
-}
-
-.hamburger:hover {
-  background: transparent;
-}
-
-.hamburger:active {
-  transform: scale(0.95);
+  z-index: 1001;
 }
 
 .hamburger span {
@@ -88,44 +179,46 @@
   width: 24px;
   background: var(--color-navy);
   border-radius: 2px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-origin: center;
-  position: relative;
+  transition: all 0.3s ease;
 }
 
 [data-theme="dark"] .hamburger span {
-  background: var(--color-steel-blue);
-}
-
-.hamburger.active {
-  background: transparent;
-  border-color: transparent;
+  background: var(--color-off-white);
 }
 
 .hamburger.active span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-  width: 24px;
+  transform: translateY(8.5px) rotate(45deg);
 }
 
 .hamburger.active span:nth-child(2) {
   opacity: 0;
-  transform: scaleX(0);
 }
 
 .hamburger.active span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
-  width: 24px;
+  transform: translateY(-8.5px) rotate(-45deg);
 }
 
-.hamburger:hover span {
-  background: var(--color-professional-blue);
+
+@media (max-width: 968px) {
+  .nav-desktop {
+    display: none;
+  }
+
+  .nav-mobile-controls {
+    display: block;
+  }
+
+  .nav-pill-container {
+    padding: 8px 20px;
+    height: 64px;
+  }
+
+  .nav-logo {
+    font-size: 1.4rem;
+  }
 }
 
-.hamburger.active:hover span {
-  background: var(--color-professional-blue);
-}
-
-/* Menu Overlay */
+/* Reusing Menu Overlay & Menu styles from original if mostly same */
 .menu-overlay {
   position: fixed;
   top: 0;
@@ -135,86 +228,63 @@
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  z-index: 999;
+  z-index: 998;
+  /* Below hamburger/nav */
 }
 
-/* Menu */
 .menu {
   position: fixed;
   top: 0;
   right: 0;
   width: 100%;
-  max-width: 450px;
+  max-width: 400px;
   height: 100vh;
   background: var(--color-bg-secondary);
-  box-shadow: var(--shadow-lg);
-  z-index: 1000;
-  padding: var(--spacing-lg);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  padding: 80px var(--spacing-md) var(--spacing-md);
+  /* Top padding for breathing room */
   overflow-y: auto;
-  transition: background-color var(--transition-theme);
+
+  display: flex;
+  flex-direction: column;
 }
 
+/* Adjust menu Header inside the slide-out if needed */
 .menu-header {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-xl);
-  padding-bottom: var(--spacing-md);
-  border-bottom: 1px solid var(--color-border);
+  display: none;
+  /* Actually we don't need header inside menu if navbar stays visible? 
+  But usually navbar stays on top. Let's keep it simple: Menu slides over. */
+  margin-bottom: 2rem;
 }
 
 .menu-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: 1.5rem;
 }
 
 .menu-link {
-  display: block;
-  width: 100%;
-  padding: var(--spacing-sm) 0;
-  font-size: 1.25rem;
-  font-weight: 500;
+  font-size: 1.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
   color: var(--color-text);
-  position: relative;
-  overflow: hidden;
+  background: none;
+  border: none;
+  cursor: pointer;
   text-align: left;
-  transition: color var(--transition-fast);
+  transition: color 0.2s;
 }
 
-.menu-link-text {
-  position: relative;
-  z-index: 1;
-}
-
-.menu-link:hover .menu-link-text,
-.menu-link.active .menu-link-text {
+.menu-link.active,
+.menu-link:hover {
   color: var(--color-professional-blue);
 }
 
-.menu-link-indicator {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--color-professional-blue);
-  transform-origin: left;
-}
-
 .menu-theme-toggle {
-  margin-top: var(--spacing-xl);
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--color-border);
+  margin-top: auto;
+  padding-top: 2rem;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-@media (min-width: 769px) {
-  .menu {
-    max-width: 500px;
-  }
+  justify-content: flex-start;
 }
