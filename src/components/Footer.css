@@ -159,7 +159,8 @@
 
 .social-icon:hover {
   background: var(--color-professional-blue);
-  transform: translateY(-3px) scale(1.1);
+  transform: translateY(-3px) scale(1.05);
+  /* User requested 5% scale up */
   box-shadow: 0 4px 12px rgba(58, 90, 138, 0.4);
 }
 
