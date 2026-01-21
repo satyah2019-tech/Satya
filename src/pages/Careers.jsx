@@ -8,8 +8,7 @@ const Careers = () => {
         email: '',
         phone: '',
         jobType: 'Internship',
-        linkedin: '',
-        resume: null
+        linkedin: ''
     })
 
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -36,13 +35,8 @@ const Careers = () => {
                 email: '',
                 phone: '',
                 jobType: 'Internship',
-                linkedin: '',
-                resume: null
+                linkedin: ''
             })
-
-            // Reset file input manually if needed
-            const fileInput = document.getElementById('resume')
-            if (fileInput) fileInput.value = ''
 
             setTimeout(() => setSubmitStatus(null), 5000)
         } catch (error) {
@@ -202,21 +196,7 @@ const Careers = () => {
                                 />
                             </div>
 
-                            <div className="form-group">
-                                <label htmlFor="resume">Upload Resume *</label>
-                                <input
-                                    type="file"
-                                    id="resume"
-                                    name="resume"
-                                    onChange={handleChange}
-                                    accept=".pdf,.doc,.docx"
-                                    required
-                                    className="form-file-input"
-                                />
-                                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
-                                    Accepted formats: PDF, DOC, DOCX
-                                </span>
-                            </div>
+
 
                             {submitStatus === 'success' && (
                                 <div className="form-success">

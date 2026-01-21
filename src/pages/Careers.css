@@ -40,27 +40,7 @@
     padding: var(--spacing-xl) 0;
 }
 
-@media (min-width: 1024px) {
-    .careers-content {
-        display: grid;
-        grid-template-columns: 1fr 400px;
-        gap: var(--spacing-2xl);
-        align-items: start;
-    }
 
-    .jobs-section {
-        order: 2;
-        margin-bottom: 0;
-    }
-
-    .application-section {
-        order: 1;
-        max-width: none;
-        margin: 0;
-        position: sticky;
-        top: 2rem;
-    }
-}
 
 /* Job Openings Section */
 .jobs-section {
@@ -141,7 +121,7 @@
     background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
-    padding: var(--spacing-xl);
+    padding: var(--spacing-lg);
     border-radius: 24px;
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-sm);
@@ -264,5 +244,27 @@
 
     .form-container {
         padding: var(--spacing-md);
+    }
+}
+
+@media (min-width: 1024px) {
+    .careers-content {
+        display: grid;
+        grid-template-columns: 1fr 420px;
+        gap: var(--spacing-lg);
+        align-items: start;
+    }
+
+    .jobs-section {
+        order: 2;
+        margin-bottom: 0;
+    }
+
+    .application-section {
+        order: 1;
+        max-width: none;
+        margin: 0;
+        position: sticky;
+        top: 2rem;
     }
 }
