@@ -11,6 +11,8 @@ const Navigation = () => {
   const navigate = useNavigate()
 
   // Detect scroll for potential styling adjustments (e.g., more blur on scroll)
+  const [activeDropdown, setActiveDropdown] = useState(null)
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20)
@@ -22,6 +24,7 @@ const Navigation = () => {
   const menuItems = [
     { path: '/about', label: 'About Us' },
     { path: '/services', label: 'Services' },
+    { path: '/projects', label: 'Projects' },
     { path: '/partners', label: 'Partners & Clients' },
     { path: '/blogs', label: 'Blogs & Articles' },
     { path: '/careers', label: 'Careers' },
@@ -55,13 +58,69 @@ const Navigation = () => {
         <div className="nav-desktop">
           <ul className="nav-links">
             {menuItems.map((item) => (
-              <li key={item.path}>
-                <Link
-                  to={item.path}
-                  className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
-                >
-                  {item.label}
-                </Link>
+              <li
+                key={item.label}
+                className="nav-item-wrapper"
+                onMouseEnter={() => item.children && setActiveDropdown(item.label)}
+                onMouseLeave={() => setActiveDropdown(null)}
+              >
+                {item.children ? (
+                  <div className="nav-dropdown-wrapper">
+                    <button
+                      className={`nav-link ${location.pathname.startsWith(item.path) ? 'active' : ''}`}
+                      onClick={() => handleNavClick(item.path)}
+                    >
+                      {item.label}
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="dropdown-arrow"
+                        style={{ marginLeft: '4px', transform: activeDropdown === item.label ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}
+                      >
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </button>
+
+                    <AnimatePresence>
+                      {activeDropdown === item.label && (
+                        <motion.div
+                          className="nav-dropdown"
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          {item.children.map((child) => (
+                            <Link
+                              key={child.path}
+                              to={child.path}
+                              className="dropdown-item"
+                              onClick={() => {
+                                closeMenu()
+                                setActiveDropdown(null)
+                              }}
+                            >
+                              {child.label}
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <Link
+                    to={item.path}
+                    className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
+                  >
+                    {item.label}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
