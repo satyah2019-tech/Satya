@@ -23,6 +23,7 @@ const Navigation = () => {
     { path: '/about', label: 'About Us' },
     { path: '/services', label: 'Services' },
     { path: '/partners', label: 'Partners & Clients' },
+    { path: '/blogs', label: 'Blogs & Articles' },
     { path: '/careers', label: 'Careers' },
   ]
 
@@ -47,7 +48,7 @@ const Navigation = () => {
         {/* LEFT: Logo Section */}
         <Link to="/" className="nav-logo" onClick={() => window.scrollTo(0, 0)}>
           <Logo size={42} /> {/* Slightly larger logo icon */}
-          <span className="logo-text">SATYAH<span className="logo-text-suffix"> RESEARCH</span></span>
+          <span className="logo-text">SATYAH<span className="logo-text-suffix"> (सत्यः)</span></span>
         </Link>
 
         {/* RIGHT: Desktop Navigation & Actions */}
@@ -114,7 +115,7 @@ const Navigation = () => {
                 </button>
                 <div className="menu-header">
                   <Logo size={60} />
-                  <span className="logo-text">SATYAH RESEARCH</span>
+                  <span className="logo-text">SATYAH (सत्यः)</span>
                 </div>
                 <ul className="menu-list">
                   {/* Standard Links */}
