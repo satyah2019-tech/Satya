@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Partners from '../components/Partners'
 import './Projects.css'
 
 const Projects = () => {
@@ -104,8 +103,6 @@ const Projects = () => {
           </div>
         </div>
       </section>
-
-      <Partners />
     </div>
   )
 }

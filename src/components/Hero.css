@@ -82,7 +82,20 @@
   max-width: 650px;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Amita:wght@400;700&display=swap');
+
 /* TYPOGRAPHY - USING ORIGINAL BRAND VARIABLES */
+.hero-motto {
+  font-family: 'Amita', serif;
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  font-weight: 700;
+  color: var(--color-professional-blue);
+  margin-bottom: var(--spacing-xs);
+  letter-spacing: 0.02em;
+  display: block;
+  text-shadow: 0 2px 4px rgba(58, 90, 138, 0.1);
+}
+
 .hero-headline {
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 5vw, 4.5rem);

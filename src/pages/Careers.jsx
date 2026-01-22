@@ -25,10 +25,25 @@ const Careers = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         setIsSubmitting(true)
+        setSubmitStatus(null)
 
-        // Simulate API call
+        const GOOGLE_FORM_ACTION_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf_wF1hDbVAm_zZpsBlB292qDD_FyulolP1EuZvLtJtGNt9fw/formResponse'
+
+        const formBody = new FormData()
+        formBody.append('entry.1414039973', formData.name)
+        formBody.append('entry.1384865087', formData.email)
+        formBody.append('entry.1881629800', formData.phone)
+        formBody.append('entry.327626644', formData.jobType)
+        formBody.append('entry.1411163976', formData.linkedin)
+
         try {
-            await new Promise(resolve => setTimeout(resolve, 1500))
+            await fetch(GOOGLE_FORM_ACTION_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formBody
+            })
+
+            // Since no-cors gives an opaque response, we assume success if no network error occurred
             setSubmitStatus('success')
             setFormData({
                 name: '',

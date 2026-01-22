@@ -78,6 +78,9 @@ const Hero = () => {
             animate="visible"
             variants={stagger}
           >
+            <motion.span className="hero-motto" variants={fadeUp}>
+              सर्वे भवन्तु सुखिनः
+            </motion.span>
             <motion.h1 className="hero-headline" variants={fadeUp}>
               Research-led insight for smarter decisions.
             </motion.h1>
