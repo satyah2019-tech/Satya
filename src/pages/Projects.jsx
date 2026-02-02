@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import './Projects.css'
 
@@ -13,13 +13,7 @@ const ProjectCard = ({ project, onClick }) => (
     whileHover={{ y: -5 }}
   >
     <div className="project-card-header">
-      <div className="project-logo-container">
-        {project.logo && (project.logo.startsWith('/') || project.logo.startsWith('http')) ? (
-          <img src={project.logo} alt={`${project.client} logo`} className="project-logo-img" />
-        ) : (
-          <span className="project-logo-emoji">{project.logo}</span>
-        )}
-      </div>
+      <div className="project-client">{project.client}</div>
       <div className="project-status">{project.status}</div>
     </div>
     <h3 className="project-title">{project.title}</h3>
@@ -52,254 +46,167 @@ const ProjectModal = ({ project, onClose }) => {
           &times;
         </button>
 
-        <div className="modal-header">
-          <div className="modal-logo-wrapper">
-            {project.logo && (project.logo.startsWith('/') || project.logo.startsWith('http')) ? (
-              <img src={project.logo} alt={`${project.client} logo`} className="modal-logo-img" />
-            ) : (
-              <span className="modal-logo-emoji">{project.logo}</span>
-            )}
+        <div className="modal-header-new">
+          <div className="modal-tags">
+            <span className="modal-category-badge">{project.category}</span>
+            <span className={`modal-status-badge ${project.status?.toLowerCase() === 'ongoing' ? 'ongoing' : 'completed'}`}>
+              {project.status}
+            </span>
           </div>
-          <div className="modal-meta-right">
-            <span className="modal-category">{project.category}</span>
-            <div className="modal-status">{project.status}</div>
-          </div>
+
+          <h2 className="modal-title-large">{project.title}</h2>
+
+          {project.client && (
+            <div className="modal-client-highlight">
+              <span className="client-label">Client</span>
+              <span className="client-name">{project.client}</span>
+            </div>
+          )}
         </div>
 
-        <h2 className="modal-title">{project.title}</h2>
-        <p className="modal-description">{project.description}</p>
+        <div className="modal-body">
+          <p className="modal-description-large">{project.description}</p>
 
-        <div className="modal-details">
-          {project.client && (
-            <div className="detail-item">
-              <span className="detail-label">Client</span>
-              <span className="detail-value">{project.client}</span>
-            </div>
-          )}
-          {project.duration && (
-            <div className="detail-item">
-              <span className="detail-label">Duration</span>
-              <span className="detail-value">{project.duration}</span>
-            </div>
-          )}
-          {project.location && (
-            <div className="detail-item">
-              <span className="detail-label">Location</span>
-              <span className="detail-value">{project.location}</span>
-            </div>
-          )}
-          {project.sampleSize && (
-            <div className="detail-item">
-              <span className="detail-label">Sample Size</span>
-              <span className="detail-value">{project.sampleSize}</span>
-            </div>
-          )}
+          <div className="modal-details-grid">
+            {project.duration && (
+              <div className="detail-card">
+                <span className="detail-icon">📅</span>
+                <div className="detail-info">
+                  <span className="detail-label">Duration</span>
+                  <span className="detail-value">{project.duration}</span>
+                </div>
+              </div>
+            )}
+            {project.location && (
+              <div className="detail-card">
+                <span className="detail-icon">📍</span>
+                <div className="detail-info">
+                  <span className="detail-label">Location</span>
+                  <span className="detail-value">{project.location}</span>
+                </div>
+              </div>
+            )}
+            {project.sampleSize && (
+              <div className="detail-card">
+                <span className="detail-icon">👥</span>
+                <div className="detail-info">
+                  <span className="detail-label">Sample Size</span>
+                  <span className="detail-value">{project.sampleSize}</span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
     </motion.div>
   )
 }
 
+// Google Sheet CSV URL
+// Note: We use 'pub?output=csv' to get raw data
+const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT7WoVBK-F6loluRyq9dokodhI3htugST0uauLjtzfvZFDcwWoADo2geeEt1xnx7iF2jq6gqK2mq0wo/pub?output=csv'
+
+const parseCSV = (text) => {
+  const lines = text.split(/\r\n|\n/)
+  if (lines.length < 2) return [] // No data
+
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''))
+
+  const result = []
+
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i]
+    if (!line.trim()) continue
+
+    const values = []
+    let currentValue = ''
+    let withinQuotes = false
+
+    for (let j = 0; j < line.length; j++) {
+      const char = line[j]
+
+      if (char === '"') {
+        if (j < line.length - 1 && line[j + 1] === '"') {
+          // Handle escaped quotes if any (rare in simple sheets but good practice)
+          currentValue += '"'
+          j++
+        } else {
+          withinQuotes = !withinQuotes
+        }
+      } else if (char === ',' && !withinQuotes) {
+        values.push(currentValue.trim().replace(/^"|"$/g, ''))
+        currentValue = ''
+      } else {
+        currentValue += char
+      }
+    }
+    values.push(currentValue.trim().replace(/^"|"$/g, ''))
+
+    const obj = { id: i } // Default ID from row index
+    headers.forEach((header, index) => {
+      if (values[index] !== undefined) {
+        obj[header] = values[index]
+      }
+    })
+    result.push(obj)
+  }
+  return result
+}
+
 const Projects = () => {
-  const ongoingProjects = [
-    {
-      id: 1,
-      title: 'Marginalization of selected folk arts and crafts',
-      category: 'Socio-Cultural',
-      description: 'Study on the marginalization of selected folk arts and crafts in the socio-cultural life of people.',
-      status: 'Ongoing',
-      client: 'Shripati Shastri Research Institute, Pune',
-      duration: '2025-26',
-      location: 'Maharashtra and Gujarat',
-      sampleSize: '3000',
-      logo: '🎨'
-    },
-    {
-      id: 2,
-      title: 'Youth Aspiration Mapping Survey',
-      category: 'Social Survey',
-      description: 'Youth Aspiration Mapping Survey conducted in the Borabanda community.',
-      status: 'Ongoing',
-      client: 'Lighthouse, Pune',
-      duration: '2026',
-      location: 'Hyderabad, Telangana',
-      sampleSize: '1200',
-      logo: '💡'
-    },
-    {
-      id: 3,
-      title: 'Future Science Champ Program',
-      category: 'Education',
-      description: 'Encouraging 6-12th students to enrich their interest in the science field.',
-      status: 'Ongoing',
-      client: 'SPPU, Pune',
-      duration: '2026',
-      location: 'PMC & PCMC',
-      sampleSize: '300 schools & classes',
-      logo: '/partners/Savitribai_Phule_Pune_University-removebg-preview.png'
-    },
-    {
-      id: 16,
-      title: 'Street Vendors in Small and Large Cities',
-      category: 'Socio-Economic',
-      description: 'The Study of Social Status, Financial Stability, and the Impact of Digital Payments and Government Schemes.',
-      status: 'Ongoing',
-      client: 'North Maharashtra University',
-      duration: '2026',
-      location: 'Maharashtra',
-      sampleSize: '4500',
-      logo: '🏪'
-    }
-  ]
-
-  const completedProjects = [
-    {
-      id: 4,
-      title: 'UMED Empower HER Program',
-      category: 'Training & Development',
-      description: 'Research commissioned to assess the impact of training program (digital book keeping) to enhance productivity and financial management in women-led MSMEs.',
-      status: 'Completed',
-      client: 'World Bank',
-      duration: '2024-25',
-      location: 'Maharashtra',
-      sampleSize: '880',
-      logo: '/partners/WORLD_BANK_GROUP-removebg-preview.png'
-    },
-    {
-      id: 5,
-      title: 'Social Welfare Scheme Data Based',
-      category: 'Welfare Analysis',
-      description: 'Welfare schemes database creation and comprehensive analysis.',
-      status: 'Completed',
-      client: 'Tapasya',
-      duration: '2025',
-      location: 'Pune',
-      sampleSize: 'Secondary Data Based',
-      logo: '🏷️'
-    },
-    {
-      id: 6,
-      title: 'Sorghum Productivity Cost Analysis',
-      category: 'Agriculture',
-      description: 'Assessment of sorghum cultivation productivity, cost, and carbon emissions in Maharashtra.',
-      status: 'Completed',
-      client: 'ICRISAT',
-      duration: '2020-2021',
-      location: 'Various villages in Maharashtra',
-      sampleSize: '600',
-      logo: '/partners/ICIRSAT-removebg-preview.png'
-    },
-    {
-      id: 7,
-      title: 'Booker Customer Survey',
-      category: 'Market Research',
-      description: 'B2B survey to gather feedback from retail customers on Booker services in Pune.',
-      status: 'Completed',
-      client: 'TATA Group’s Booker Wholesale Company',
-      duration: '2021-2022',
-      location: 'Pune',
-      sampleSize: '150',
-      logo: '🏢'
-    },
-    {
-      id: 8,
-      title: 'Skill PMKVY India Mission Analysis',
-      category: 'Skill Development',
-      description: 'An Analytical Study of the Role, Status, and Challenges of Skill PMKVY India Mission in Generating Self-Employment in Maharashtra.',
-      status: 'Completed',
-      client: 'Sir Parshurambhau Mahavidyalaya, Pune',
-      duration: '2023-2024',
-      location: 'Solapur, Pune, Ahmednagar, Satara, Sangali, Kolhapur',
-      sampleSize: '3000',
-      logo: '🎓'
-    },
-    {
-      id: 9,
-      title: 'PCMC Smart Sarthi App Survey',
-      category: 'Urban Tech Impact',
-      description: 'User Experience Survey for Impact Assessment of the PCMC Smart Sarthi App.',
-      status: 'Completed',
-      client: 'Shri Balaji University, Pune',
-      duration: '2024-2025',
-      location: 'PCMC Area, Maharashtra',
-      sampleSize: '2500',
-      logo: '🏫'
-    },
-    {
-      id: 10,
-      title: 'Success of PMJJBY and PMSBY (Pune)',
-      category: 'Policy Assessment',
-      description: 'Study of success of PMJJBY and PMSBY with reference to Pune District of Maharashtra.',
-      status: 'Completed',
-      client: 'National Insurance Academy, Pune',
-      duration: '2025',
-      location: 'Pune District',
-      sampleSize: '1000',
-      logo: '🛡️'
-    },
-    {
-      id: 11,
-      title: 'PMFBY - Crop Insurance Impact',
-      category: 'Agricultural Economics',
-      description: 'Short term empirical research project on the impact of Pradhan Mantri Fasal Bima Yojna (PMFBY) on social-economic development of farmers.',
-      status: 'Completed',
-      client: 'SYMBIOSIS',
-      duration: '2023-24',
-      location: 'Maharashtra',
-      sampleSize: '1500',
-      logo: '/partners/Symbiosis-removebg-preview.png'
-    },
-    {
-      id: 12,
-      title: 'Human Wildlife Conflict',
-      category: 'Environmental Study',
-      description: 'Estimation of net agricultural losses in Maharashtra - Survey of farmers regarding human wildlife conflict.',
-      status: 'Completed',
-      client: 'GIPE',
-      duration: '2024-2025',
-      location: 'Kishan Exhibition, Mulshi',
-      sampleSize: '1000',
-      logo: '/partners/GIPE-removebg-preview.png'
-    },
-    {
-      id: 13,
-      title: 'Net Zero & Climate Resilient Village',
-      category: 'Sustainability',
-      description: 'Baseline emission report for the Net Zero and climate resilient Village Project.',
-      status: 'Completed',
-      client: 'GIPE (Centre of Sustainable Development)',
-      duration: '2022-2023',
-      location: 'Pune',
-      sampleSize: 'Village census',
-      logo: '/partners/GIPE-removebg-preview.png'
-    },
-    {
-      id: 14,
-      title: 'Study of Grammangal Schools',
-      category: 'Education Research',
-      description: 'Data collection and report writing for Grammangal schools and Anganwadis.',
-      status: 'Completed',
-      client: 'Centre of Studies in Social Sciences Pune (CSSS)',
-      duration: '2024',
-      location: 'Palghar',
-      sampleSize: '2 schools, 4 Anganwadis',
-      logo: '📊'
-    },
-    {
-      id: 15,
-      title: 'PMJJBY & PMSBY Beneficiary Study',
-      category: 'Insurance Analysis',
-      description: 'Data collection of Policy holder/Beneficiaries for Pradhan Mantri Jeevan Jyoti Bima Yojna and PM Suraksha Bima Yojna.',
-      status: 'Completed',
-      client: 'National Insurance Agency',
-      duration: '2025-2026',
-      location: 'Pune',
-      sampleSize: '500',
-      logo: '📄'
-    }
-  ]
-
+  const [projects, setProjects] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [selectedProject, setSelectedProject] = useState(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch(GOOGLE_SHEET_URL)
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`)
+        }
+        const text = await response.text()
+        const parsedData = parseCSV(text)
+        setProjects(parsedData)
+        setLoading(false)
+      } catch (err) {
+        console.error("Project fetch error:", err)
+        setError("Unable to load projects at the moment. Please try again later.")
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  const ongoingProjects = projects.filter(p => !p.status || p.status.trim().toLowerCase() === 'ongoing')
+  const completedProjects = projects.filter(p => p.status && p.status.trim().toLowerCase() === 'completed')
+
+  if (loading) {
+    return (
+      <div className="projects-page" style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div className="loading-spinner">Loading Projects...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    // Fallback to empty or show error, but keeping the page structure might be better
+    // For now, let's show the error clearly so user knows what's wrong
+    return (
+      <div className="projects-page" style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: '20px' }}>
+        <h2>Oops!</h2>
+        <p>{error}</p>
+        <button onClick={() => window.location.reload()} style={{ padding: '10px 20px', cursor: 'pointer' }}>Retry</button>
+      </div>
+    )
+  }
+
+
+
+
+
 
   return (
     <div className="projects-page">
